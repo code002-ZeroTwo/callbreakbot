@@ -79,13 +79,13 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
 def suitbid(spadecount, array=[]):
     count = 0
     a = len(array)
-    if spadecount < 3 and a > 6:
+    if a > 6:
         return 0
     else:
-        for card in array:
-            if card.rank == RANK["ACE"] or RANK["KING"]:
+        for i in range(len(array)-1):
+            if array[i].rank == RANK["ACE"] or array[i].rank == RANK["KING"]:
                 count = 1
-            elif card.rank == RANK["ACE"] and (card+1).rank == RANK["KING"]:
+            elif array[i].rank == RANK["ACE"] and array[i+1].rank == RANK["KING"]:
                 count = 2
             else:
                 count = 0
@@ -119,15 +119,16 @@ def get_bid(cardsStrArr: List[str]):
 
     count = clubCount + heartCount + diamondCount
     # count aces and king and use that as bid value
-   # for card in cards:
-    '''if card.rank == RANK["ACE"]:
+    for i in range(len(cards)-1):
+        if cards[i].rank ==RANK["ACE"]:
             count += 1
-            if[card+1].rank == RANK["KING"]:
+            if cards[i+1].rank == RANK["KING"]:
                 count += 1
-        if card.rank == RANK["KING"]:
-            '''
 
     # 8 is maximum allowed bid
     count = count if count < 8 else 8
     # 1 is minimum allowed bid
     return max(1, count)
+
+
+
