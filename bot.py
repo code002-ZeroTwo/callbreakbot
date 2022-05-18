@@ -33,7 +33,12 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
     # Throw the first card in hand.
     # TODO: maybe play Ace or King here
     if len(played_cards) == 0:
-        return cards[0]
+        for card in cards:
+            if card.suit != SUIT["SPADE"]:
+                if card.rank == RANK["ACE"]:
+                    return card
+        # S H C D
+       # for i in c # RETURNS HIGHEST CARD if your turn always
 
     selected_card, valid_card = None, None
     highest_card = get_highest_played_card(played_cards)
@@ -64,8 +69,9 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
                     selected_card = card
                     break
             else:
-                # TODO: maybe play a low-rank spade card if opponents have not played spade
-                selected_card = card
+                if opponent_spade is None:
+                    # TODO: maybe play a low-rank spade card if opponents have not played spade
+                    selected_card = card[-1]
                 break
 
     # no spade card in hand; use any card
@@ -74,6 +80,7 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
         selected_card = cards[0]
 
     return selected_card
+
 
 
 def suitval(suitarr):
@@ -113,7 +120,6 @@ def spade_bid(spadearr):
                 flag += 1
     if flag != 0:
         adjusted_length = len(spadearr) - flag
-        print(adjusted_length)
         if(adjusted_length <= 2 and flag <= 2):
             ret_count += 1
         elif(adjusted_length == 3 and flag >= 2):
@@ -127,7 +133,6 @@ def spade_bid(spadearr):
             ret_count += 2
         if(initial_length == 6):
             ret_count += 3
-    print(ret_count)
     return ret_count
 
 
@@ -160,7 +165,3 @@ def get_bid(cardsStrArr: List[str]):
     count = count if count < 8 else 8
     # 1 is minimum allowed bid
     return max(count, 1)
-
-
-print(get_bid(['1S', 'KS', '2H', 'KC', 'QC',
-      '5C', '4C', '1D', 'KD', 'TS', '3S', '2S']))
