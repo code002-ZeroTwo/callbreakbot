@@ -76,31 +76,32 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
     return selected_card
 
 
-def suitbid(spadecount, array=[]):
-    count = 0
-    a = len(array)
-    if spadecount < 3 and a > 6:
-        return 0
+def suitval(suitarr):
+    ret_count = 0
+    if len(suitarr) < 6:
+        ret_count = 0
     else:
-        for card in array:
-            if card.rank == RANK["ACE"] or RANK["KING"]:
-                count = 1
-            elif card.rank == RANK["ACE"] and (card+1).rank == RANK["KING"]:
-                count = 2
-            else:
-                count = 0
-    return count
+        for i in range(len(suitarr)-1):
+            if suitarr[i].rank == RANK["FOUR"]:
+                print('four')
+                ret_count += 1
+                if suitarr[i+1].rank == RANK["FIVE"]:
+                    print('4 and 5')
+                    ret_count += 2
+            elif suitarr[i].rank == RANK["KING"]:
+                if suitarr[i+1].rank == RANK["QUEEN"]:
+                    ret_count += 1
+    return ret_count
 
 
 def get_bid(cardsStrArr: List[str]):
-    cards = parse_card_arr(cardsStrArr)
     count = 0
-    spadearr = []
-    spadecount = len(spadearr)
+    cards = parse_card_arr(cardsStrArr)
 
     clubarr = []
     heartarr = []
     diamondarr = []
+    spadearr = []
 
     # counting the number of cards in each suits
     for card in cards:
@@ -112,22 +113,15 @@ def get_bid(cardsStrArr: List[str]):
             heartarr.append(card)
         if card.suit == SUIT["DIAMOND"]:
             diamondarr.append(card)
+    #spade_count = len(spadearr)
 
-    clubCount = suitbid(clubarr, spadecount)
-    heartCount = suitbid(heartarr, spadecount)
-    diamondCount = suitbid(diamondarr, spadecount)
-
-    count = clubCount + heartCount + diamondCount
-    # count aces and king and use that as bid value
-   # for card in cards:
-    '''if card.rank == RANK["ACE"]:
-            count += 1
-            if[card+1].rank == RANK["KING"]:
-                count += 1
-        if card.rank == RANK["KING"]:
-            '''
-
+    count += suitval(clubarr)
+    count += suitval(diamondarr)
     # 8 is maximum allowed bid
     count = count if count < 8 else 8
     # 1 is minimum allowed bid
-    return max(1, count)
+    return count
+
+
+print(get_bid(['1S', 'KS', '1D', '3S', '4C',
+      'KD', '5S', '6S', '5C', 'KC', 'QC']))
