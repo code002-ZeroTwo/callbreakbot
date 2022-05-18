@@ -78,19 +78,56 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
 
 def suitval(suitarr):
     ret_count = 0
-    if len(suitarr) < 6:
+    if len(suitarr) > 6:
         ret_count = 0
     else:
         for i in range(len(suitarr)-1):
-            if suitarr[i].rank == RANK["FOUR"]:
-                print('four')
+            if suitarr[i].rank == RANK["ACE"]:
                 ret_count += 1
-                if suitarr[i+1].rank == RANK["FIVE"]:
-                    print('4 and 5')
-                    ret_count += 2
+                if suitarr[i+1].rank == RANK["KING"]:
+                    ret_count += 1
             elif suitarr[i].rank == RANK["KING"]:
                 if suitarr[i+1].rank == RANK["QUEEN"]:
                     ret_count += 1
+    return ret_count
+
+
+def spade_bid(spadearr):
+    initial_length = len(spadearr)
+    ret_count = 0
+    flag = 0
+
+    for i in range(initial_length-1):
+        if initial_length >= 1 and spadearr[i].rank == RANK["ACE"]:
+            ret_count += 1
+            flag += 1
+            if initial_length >= 2 and spadearr[i+1].rank == RANK["KING"]:
+                ret_count += 1
+                flag += 1
+                if initial_length >= 3 and spadearr[i+2].rank == RANK["QUEEN"]:
+                    ret_count += 1
+                    flag += 1
+        elif spadearr[i].rank == RANK["KING"]:
+            if spadearr[i].rank == RANK["QUEEN"]:
+                ret_count += 1
+                flag += 1
+    if flag != 0:
+        adjusted_length = len(spadearr) - flag
+        print(adjusted_length)
+        if(adjusted_length <= 2 and flag <= 2):
+            ret_count += 1
+        elif(adjusted_length == 3 and flag >= 2):
+            ret_count += 2
+        elif(adjusted_length == 4 and flag >= 2):
+            ret_count += 3
+    else:
+        if(initial_length == 4):
+            ret_count += 1
+        elif(initial_length == 5):
+            ret_count += 2
+        if(initial_length == 6):
+            ret_count += 3
+    print(ret_count)
     return ret_count
 
 
@@ -113,15 +150,17 @@ def get_bid(cardsStrArr: List[str]):
             heartarr.append(card)
         if card.suit == SUIT["DIAMOND"]:
             diamondarr.append(card)
-    #spade_count = len(spadearr)
 
     count += suitval(clubarr)
     count += suitval(diamondarr)
+    count += suitval(heartarr)
+    count += spade_bid(spadearr)
+
     # 8 is maximum allowed bid
     count = count if count < 8 else 8
     # 1 is minimum allowed bid
-    return count
+    return max(count, 1)
 
 
-print(get_bid(['1S', 'KS', '1D', '3S', '4C',
-      'KD', '5S', '6S', '5C', 'KC', 'QC']))
+print(get_bid(['1S', 'KS', '2H', 'KC', 'QC',
+      '5C', '4C', '1D', 'KD', 'TS', '3S', '2S']))
