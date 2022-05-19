@@ -25,20 +25,26 @@ def get_highest_played_card(played: List[Card]):
     return highestCard
 
 
+def first_play(played_cards, cards):
+    for i in range(cards, 1):
+        if cards[i].suit == "SPADE":
+            if cards[i].rank == "ACE":
+                return cards[i]
+        else:
+            return cards[0]
+
+
 def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
     played_cards = parse_card_arr(played_str_arr)
     cards = parse_card_arr(cards_str_arr)
+    
 
     # First turn is ours or we have won last hand.
     # Throw the first card in hand.
     # TODO: maybe play Ace or King here
     if len(played_cards) == 0:
-        for card in cards:
-            if card.suit != SUIT["SPADE"]:
-                if card.rank == RANK["ACE"]:
-                    return card
-        # S H C D
-       # for i in c # RETURNS HIGHEST CARD if your turn always
+        first_play(played_cards, cards)
+    
 
     selected_card, valid_card = None, None
     highest_card = get_highest_played_card(played_cards)
@@ -52,8 +58,11 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
 
     # card of same suit exists but not higher than played
     if selected_card is None and valid_card is not None:
+        for card in cards:
+            if same_suit(card, highest_card):
+                selected_card = card[-1]
         # TODO: maybe play a low-rank card if no winning card exists
-        selected_card = valid_card
+    selected_card = valid_card
 
     # no card of same suit found; use spade
     if selected_card is None:
@@ -76,9 +85,10 @@ def get_play_card(played_str_arr: List[str], cards_str_arr: List[str]):
 
     # no spade card in hand; use any card
     if selected_card is None:
-        # TODO: maybe play a low-rank card if no winning card exists
-        selected_card = cards[0]
-
+        for card in cards:
+            if card.rank["value"] < 5:
+                selected_card = card
+        # TODO: maybe play a low-rank card if no winning card exist
     return selected_card
 
 
@@ -165,3 +175,4 @@ def get_bid(cardsStrArr: List[str]):
     count = count if count < 8 else 8
     # 1 is minimum allowed bid
     return max(count, 1)
+
